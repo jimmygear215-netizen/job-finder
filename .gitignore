@@ -1,11 +1,7 @@
-# Ignore entire project except what's in the_working
-# Except for these root files if needed:
-.vercel/
-node_modules/
-__pycache__/
-*.pyc
-
-# Keep only the working folder
+# Ignore everything except the_working folder
+/*
+!.git/
+!.gitignore
 !the_working/.gitkeep
 !the_working/app.py
 !the_working/index.html
