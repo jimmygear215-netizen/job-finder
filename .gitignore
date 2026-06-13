@@ -1,29 +1,15 @@
-# Python Byte-Code / .pyc files
-*.py[cod]
-*$py.class
-
-# Virtual Environment
-venv/
-env/
-ENV/
-
-# IDEs and text editors
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# macOS
-.DS_Store
-
-# Project specific - don't upload these!
+# Ignore entire project except what's in the_working
+# Except for these root files if needed:
+.vercel/
 node_modules/
 __pycache__/
-*.egg-info/
-dist/
-build/
-.env
-.env.local
-.pytest_cache/
-.coverage
+*.pyc
+
+# Keep only the working folder
+!the_working/.gitkeep
+!the_working/app.py
+!the_working/index.html
+!the_working/static/*
+!the_working/templates/*
+!the_working/requirements.txt
+!the_working/README.md

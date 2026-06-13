@@ -1,0 +1,207 @@
+# Changelog
+
+## v0.0.1 - 2026-06-12
+
+### Fixed
+- Fixed `the_working/templates/index.html` â€” was an empty folder, now a proper HTML file
+- Fixed `the_working/static/style.css/` â€” was an empty folder, removed
+- Cleaned `requirements.txt` â€” removed unused `streamlit`, `pywebview`
+- Fixed `app.py` startup crash â€” emoji print chars caused UnicodeEncodeError on Windows cp1252
+
+### Added
+- `the_dev/app.py` â€” Flask backend copied into dev workspace
+- `the_dev/templates/index.html` â€” frontend UI as a proper file in dev
+- `the_dev/requirements.txt` â€” minimal deps (flask, requests)
+- `the_dev/changelog.txt` â€” this file
+
+### Changed
+- Workflow established: dev in `the_dev/` â†’ backup `the_working/` â†’ deploy â†’ test
+
+### Known Issues
+- Resume analysis is keyword-based only (no AI/NLP)
+- Job database is mock data (7 roles hardcoded)
+
+## v0.0.2 - 2026-06-12
+
+### Added
+- PDF resume upload (drag-and-drop + browse) with text extraction
+- GitHub profile/repo URL analysis (fetches languages, repos, stars via API)
+- Portfolio website URL analysis (scrapes tech keywords from personal sites)
+- `the_dev/pdf_handler.py` â€” PDF text extraction module
+- `the_dev/github_analyzer.py` â€” GitHub profile analysis module
+- `the_dev/portfolio_analyzer.py` â€” portfolio website scraper module
+
+### Changed
+- New input methods: paste text, upload PDF, paste GitHub URL, paste portfolio URL
+- Matching algorithm now accepts skills from any input source
+
+### Known Issues
+- Resume analysis is keyword-based only (no AI/NLP)
+- Job database is mock data (7 roles hardcoded)
+- Portfolio scraping limited to static HTML content
+
+## v0.0.3 - 2026-06-12
+
+### Added
+- Dynamic URL list: add/remove multiple portfolio or working model URLs
+- Auto-detection: GitHub URLs vs portfolio URLs handled automatically
+- Per-URL status display in combined results
+
+### Changed
+- Simplified to single URL input type (handles GitHub + portfolio + demos)
+
+## v0.0.4 - 2026-06-12
+
+### Added
+- 5-step conversational wizard flow
+- Welcome step with career intent (same path vs dream job)
+- Follow-up questions based on detected skills + career intent
+- Dream job matches highlighted with star badge
+- Progress bar across all steps
+- Follow-up answer enrichment (answers feed back into matching)
+
+### Changed
+- Complete UX redesign: step-by-step instead of single-page
+- /follow-up-questions endpoint with dynamic question generation
+- Match scoring considers career intent for dream job highlighting
+
+### Known Issues
+- Resume analysis is keyword-based only (no AI/NLP)
+- Job database is mock data (7 roles hardcoded)
+- Portfolio scraping limited to static HTML content
+
+## v0.0.5 - 2026-06-12
+
+### Fixed
+- Skill detection false positives — replaced substring matching with regex word boundaries. "ui" no longer matches inside "require", "equipment", "build", etc.
+- Job database expanded from 7 to 16 roles across multiple industries
+
+### Added
+- Driving/logistics roles: Truck Driver, Delivery Driver, Fleet Manager, Logistics Coordinator, Dispatcher, Route Planner, Warehouse Manager
+- General roles: Customer Service Representative, Office Administrator
+- New skill categories: driving, logistics, communication, planning
+- Follow-up questions for driving, logistics, and communication skills
+
+### Changed
+- Complete visual redesign — dark navy theme, refined typography, cleaner spacing
+- Professional color palette: navy, blue accent, green success
+- Fade-up step transitions, pill-shaped buttons, elevated cards
+
+## v0.0.6 - 2026-06-12
+
+### Fixed
+- Follow-up questions now based only on resume/PDF text skills, not URL-scraped skills
+- Portfolio/URL analysis no longer pollutes refinement questions with irrelevant topics
+
+### Changed
+- /combine-analysis returns resume_skills (from resume/PDF) and skills_found (all sources combined)
+- /follow-up-questions uses resume_skills when available, falls back to combined skills
+- Skills display shows which skills drive the follow-up questions
+
+## v0.0.7 - 2026-06-12
+
+### Fixed
+- PDF auto-extracts on "Analyze & Continue" — no separate "Extract" click needed
+- Validation now checks if PDF file is selected, not just if text was extracted
+- Skills display shows resume-sourced vs URL-sourced skills separately
+
+### Changed
+- "Analyze & Continue" auto-extracts PDF text if file was dropped but not yet processed
+- Skills preview shows "From your resume" (blue badges) and "From URLs" (green badges) clearly
+
+## v0.0.8 - 2026-06-12
+
+### Fixed
+- Experience level detection — replaced fragile line-counting with regex year extraction
+- Now catches: \"10 years\", \"5+ yrs\", \"3 years of experience\", \"10 years driving\"
+- Thresholds: 7+ = senior, 3-6 = mid-level, 0-2 = junior
+- No longer requires \"year\" and \"experience\" on the same line
+
+## v0.0.9 - 2026-06-12
+
+### Changed
+- Reactive auto-analyze: resume skills detected live as you type (500ms debounce)
+- PDF auto-extracts on drop — no separate button click needed
+- Combined skills display updates live as any source changes
+- "Continue" button replaces "Analyze & Continue" — analysis is always live
+- Skills display shows frequency counts (e.g., "driving (4x)")
+- Follow-up questions use top-frequency skill for "same career path"
+- Dream job path shows all skill questions + motivation questions
+
+## v0.0.10 - 2026-06-12
+
+### Fixed
+- PDF upload: added 20-second timeout via AbortController — never hangs forever
+- PDF upload: guaranteed status display — always shows result or error message
+- PDF upload: clearer messaging — "Extracting text from PDF..." / "Done — 3 skills: ..." / "Request timed out"
+- PDF upload: drop zone text updates to "Error — click to retry" on failure
+- PDF upload: safer error extraction from API response
+
+## v0.0.11 - 2026-06-12
+
+### Fixed
+- File input browse now auto-starts PDF upload — onchange calls both handlePdfFile() and uploadPdf()
+- Footer version tracking
+
+## v0.1.0 - 2026-06-12
+
+### Added
+- AI-powered career analysis via LM Studio / OpenAI-compatible API
+- the_dev/ai_analyzer.py — configurable AI client with endpoint + API key
+- /ai-analyze endpoint — AI extracts skills, experience level, industry from resume
+- /ai-question endpoint — AI generates adaptive follow-up questions based on profile
+- /ai-test endpoint — connection test that detects loaded model name
+- AI settings panel with endpoint URL, API key, and model fields
+- Settings persist in browser localStorage
+- Connection status shown in header
+
+### Changed
+- UI updated for AI-driven conversational flow
+- Gear icon settings panel with Test button
+
+## v0.2.0 - 2026-06-12
+
+### Added
+- /ai-suggest endpoint — AI generates 10 role suggestions from profile + Q&A
+- suggest_roles() in ai_analyzer.py — prompt generates titles with scores, industry, salary range, fit reason
+
+### Removed
+- JOB_DATABASE — no more hardcoded jobs
+- analyze_resume() — keyword-based skill detection removed
+- All old endpoints: /analyze, /match, /jobs, /combine-analysis, /match-from-skills, /follow-up-questions, /ai-match
+- TOPIC_QUESTIONS, DREAM_JOB_QUESTIONS — static question maps removed
+- github_analyzer and portfolio_analyzer imports kept for URL input step
+
+### Changed
+- Pure AI flow: resume ? AI analysis ? 5 adaptive Q&A ? 10 AI-suggested roles
+- Results page shows AI-generated suggestions instead of database matches
+- Suggestion cards show: title, match score, industry, salary range, why it fits
+- All hardcoded logic replaced by AI prompts
+
+## v0.2 - 2026-06-12
+
+### Fixed
+- AI responses now complete — removed max_tokens limits that were truncating JSON mid-output
+- Added truncation guard in extract_json() — detects cut-off responses immediately
+- extract_json() now prefers {object} over [array] — prevents array being returned as profile
+- Frontend validates AI response is an object before passing to question endpoint
+- All AI endpoints check response body for errors regardless of HTTP status code
+
+## v0.3.0 - 2026-06-12
+
+### Fixed
+- URL row indexing bug: duplicated idx=0 when adding new URL rows
+- URL fetch status indicator added — shows fetched/total count with names
+- URL skills now passed to AI analysis (stored as objects with text + skills array)
+- URL descriptions passed to AI questions — questions can reference portfolio/GitHub content
+
+### Added
+- Dream job path: transferable skills identification, bridge role suggestions
+- Career change guidance in all AI prompts (analyze, question, suggest)
+- CollectUrlSkills() extracts all skills from fetched URLs for AI analysis
+- updateUrlStatus() shows live fetch progress below URL list
+
+### Changed
+- Version bumped to v0.3.0 — stable AI-only release with both career paths
+- Both Same Path and Dream Job flows fully functional
+- URL data flows end-to-end: fetch ? store ? AI analysis ? questions ? suggestions

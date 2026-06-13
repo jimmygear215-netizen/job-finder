@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Finder - Find Your Perfect Role!</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; color: #333; }
+        .container { max-width: 900px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 25px; color: white; }
+        h1 { font-size: 2.5em; margin-bottom: 8px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        p.subtitle { font-size: 1.1em; opacity: 0.9; }
+
+        /* Progress bar */
+        .progress-bar { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; }
+        .step-dot { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9em; background: rgba(255,255,255,0.3); color: rgba(255,255,255,0.6); transition: all 0.3s; cursor: pointer; }
+        .step-dot.active { background: white; color: #667eea; transform: scale(1.15); }
+        .step-dot.done { background: #27ae60; color: white; }
+
+        /* Card */
+        .main-card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); margin-bottom: 20px; min-height: 350px; }
+        .step-title { font-size: 1.4em; color: #333; margin-bottom: 6px; }
+        .step-subtitle { font-size: 1em; color: #666; margin-bottom: 20px; }
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+
+        /* Welcome step */
+        .welcome-icon { font-size: 4em; text-align: center; margin-bottom: 15px; }
+        .intent-cards { display: flex; gap: 15px; margin-top: 20px; }
+        .intent-card { flex: 1; padding: 25px; border: 3px solid #ddd; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .intent-card:hover { border-color: #667eea; background: #f8f9ff; }
+        .intent-card.selected { border-color: #667eea; background: #eef0ff; }
+        .intent-card .icon { font-size: 2.5em; margin-bottom: 10px; }
+        .intent-card .label { font-size: 1.1em; font-weight: bold; }
+        .intent-card .desc { font-size: 0.85em; color: #666; margin-top: 5px; }
+
+        /* Input groups */
+        .input-group { margin-bottom: 18px; }
+        label { display: block; font-weight: bold; margin-bottom: 6px; color: #555; font-size: 0.95em; }
+        textarea, input[type="text"], input[type="number"], select { width: 100%; padding: 10px 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 0.95em; font-family: inherit; transition: border-color 0.3s; }
+        textarea:focus, input:focus, select:focus { outline: none; border-color: #667eea; }
+        textarea { resize: vertical; }
+        button { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1em; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        button.full { width: 100%; padding: 15px; font-size: 1.1em; margin-top: 10px; }
+        button.small { padding: 8px 16px; font-size: 0.85em; margin: 0; }
+        button.secondary { background: #6c757d; }
+        button.success { background: #27ae60; }
+        .nav-buttons { display: flex; gap: 10px; margin-top: 20px; }
+        .nav-buttons button { flex: 1; }
+        .input-row { display: flex; gap: 10px; align-items: flex-start; }
+        .input-row input { flex: 1; }
+        .input-row button { white-space: nowrap; }
+
+        /* URL rows */
+        .url-row { margin-bottom: 8px; }
+        .url-row .input-row button.small:last-child { min-width: 36px; padding: 8px 10px; }
+
+        /* Drop zone */
+        .drop-zone { border: 2px dashed #ddd; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .drop-zone:hover, .drop-zone.dragover { border-color: #667eea; background: #f0f2ff; }
+        .drop-zone.has-file { border-color: #27ae60; background: #e8f8e8; }
+        .drop-zone-icon { font-size: 2em; margin-bottom: 5px; }
+        .drop-zone-text { font-size: 0.95em; color: #666; }
+        .file-info { display: none; padding: 8px 12px; background: #f8f9fa; border-radius: 6px; margin-top: 8px; align-items: center; gap: 10px; }
+        .file-info.visible { display: flex; }
+        .file-name { flex: 1; font-weight: 500; font-size: 0.9em; }
+        .analysis-result { background: #f0f4ff; padding: 8px 12px; border-radius: 6px; margin-top: 6px; display: none; font-size: 0.85em; border-left: 3px solid #667eea; }
+        .analysis-result.visible { display: block; }
+        .analysis-result .status-ok { color: #27ae60; font-weight: bold; }
+        .analysis-result .status-err { color: #c0392b; }
+
+        /* Skills display */
+        .skills-display { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 10px; }
+        .skill-badge { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4px 10px; border-radius: 20px; margin: 3px; font-size: 0.85em; }
+        .source-tag { display: inline-block; background: #e8f4fd; color: #2c6b9e; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; margin-left: 4px; }
+
+        /* Follow-up questions */
+        .followup-question { margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px; }
+        .followup-question .q-text { font-weight: bold; margin-bottom: 10px; font-size: 1em; }
+        .followup-option { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 2px solid #ddd; border-radius: 8px; margin-bottom: 6px; cursor: pointer; transition: all 0.15s; }
+        .followup-option:hover { border-color: #667eea; background: #f8f9ff; }
+        .followup-option.selected { border-color: #667eea; background: #eef0ff; }
+        .followup-option input[type="checkbox"], .followup-option input[type="radio"] { width: 18px; height: 18px; accent-color: #667eea; }
+
+        /* Results */
+        .job-card { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 10px; padding: 18px; margin-bottom: 15px; border-left: 5px solid #667eea; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .job-card.high-score { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border-left-color: #27ae60; }
+        .job-card.dream { border-left-color: #e3b341; background: linear-gradient(135deg, #fff9e6 0%, #fff3cc 100%); }
+        .job-title { font-size: 1.3em; font-weight: bold; color: #333; margin-bottom: 6px; }
+        .job-company { color: #667eea; font-weight: 500; margin-bottom: 8px; }
+        .score-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 0.85em; margin-right: 8px; }
+        .score-high { background: #d4edda; color: #155724; }
+        .score-medium { background: #fff3cd; color: #856404; }
+        .score-low { background: #f8d7da; color: #721c24; }
+        .job-info { display: flex; gap: 15px; margin-top: 8px; font-size: 0.85em; }
+        .info-item { background: white; padding: 6px 12px; border-radius: 5px; flex: 1; }
+        .why-match { margin-top: 10px; font-size: 0.9em; color: #666; font-style: italic; background: white; padding: 10px; border-radius: 6px; }
+
+        /* Loading */
+        .loading { display: none; text-align: center; padding: 30px; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-text { font-size: 1em; color: #667eea; }
+
+        .error-message { background: #f8d7da; color: #721c24; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: none; text-align: center; }
+        footer { text-align: center; color: white; margin-top: 30px; font-size: 0.85em; opacity: 0.8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Job Finder</h1>
+            <p class="subtitle">Find your perfect role — whether it's the same path or your dream job</p>
+        </header>
+
+        <div id="error" class="error-message"></div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="step-dot active" data-step="1">1</div>
+            <div class="step-dot" data-step="2">2</div>
+            <div class="step-dot" data-step="3">3</div>
+            <div class="step-dot" data-step="4">4</div>
+            <div class="step-dot" data-step="5">5</div>
+        </div>
+
+        <div class="main-card">
+            <!-- Step 1: Welcome -->
+            <div id="step-1" class="step-content active">
+                <div class="welcome-icon">&#x1F44B;</div>
+                <div class="step-title" style="text-align:center;">Welcome to Job Finder!</div>
+                <div class="step-subtitle" style="text-align:center;">Looking for your next opportunity? Let's find the perfect fit.</div>
+
+                <div class="step-subtitle" style="text-align:center; margin-top:20px; font-weight:bold;">What are we aiming for?</div>
+                <div class="intent-cards">
+                    <div class="intent-card" onclick="selectIntent('same', this)">
+                        <div class="icon">&#x1F4AA;</div>
+                        <div class="label">Same Career Path</div>
+                        <div class="desc">Leverage your existing experience and find roles that match your current skill set</div>
+                    </div>
+                    <div class="intent-card" onclick="selectIntent('dream', this)">
+                        <div class="icon">&#x2B50;</div>
+                        <div class="label">Dream Job</div>
+                        <div class="desc">Go after that aspirational role — we'll highlight growth opportunities and stretch matches</div>
+                    </div>
+                </div>
+                <div class="nav-buttons" style="justify-content:flex-end;">
+                    <button onclick="goToStep(2)" id="welcomeNextBtn" disabled>Let's Go &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Inputs -->
+            <div id="step-2" class="step-content">
+                <div class="step-title">Tell Us About Yourself</div>
+                <div class="step-subtitle">Paste your resume, upload a PDF, or link your online profiles</div>
+
+                <textarea id="resumeText" placeholder="Paste your resume or describe your skills here..." rows="4" style="margin-bottom:10px;"></textarea>
+
+                <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
+                    <div id="dropZone" class="drop-zone" style="flex:1; padding:12px;" onclick="document.getElementById('pdfInput').click()">
+                        <span class="drop-zone-text">Drop PDF here or click to browse</span>
+                    </div>
+                    <button class="small" onclick="uploadPdf()" id="uploadPdfBtn">Extract PDF</button>
+                </div>
+                <input type="file" id="pdfInput" accept=".pdf" style="display:none" onchange="handlePdfFile(this.files[0])">
+                <div id="fileInfo" class="file-info"><span class="file-name" id="fileName"></span><button class="small secondary" onclick="clearPdf()">Remove</button></div>
+                <div id="pdfResult" class="analysis-result"></div>
+
+                <div style="margin-top:12px;">
+                    <label>URLs (GitHub, portfolio, demos — optional):</label>
+                    <div id="urlList">
+                        <div class="url-row" data-idx="0">
+                            <div class="input-row">
+                                <input type="text" class="url-input" placeholder="https://github.com/username or https://myportfolio.com">
+                                <button class="small" onclick="fetchUrlRow(0)">Fetch</button>
+                                <button class="small secondary" onclick="removeUrlRow(0)">&times;</button>
+                            </div>
+                            <div id="url-result-0" class="analysis-result"></div>
+                        </div>
+                    </div>
+                    <button class="small secondary" onclick="addUrlRow()" style="margin-top:4px;">+ Add Another URL</button>
+                </div>
+
+                <div id="loadingAnalysis" class="loading"><div class="spinner"></div><p class="loading-text" id="loadingText">Analyzing...</p></div>
+
+                <div id="skillsDisplay" class="skills-display" style="display:none; margin-top:12px;">
+                    <p><strong>Sources used:</strong> <span id="sourcesUsed">None</span></p>
+                    <p><strong>Skills:</strong></p>
+                    <div id="skillsList"></div>
+                    <p style="margin-top:6px;"><strong>Experience Level:</strong> <span id="experienceLevel"></span></p>
+                    <div id="urlBreakdown"></div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="secondary" onclick="goToStep(1)">&larr; Back</button>
+                    <button onclick="analyzeAndContinue()" id="analyzeBtn">Analyze & Continue &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Follow-up Questions -->
+            <div id="step-3" class="step-content">
+                <div class="step-title">Help Us Narrow It Down</div>
+                <div class="step-subtitle" id="followupIntro">Based on your profile, we have a few more questions.</div>
+                <div id="followupContainer"></div>
+                <div id="loadingFollowup" class="loading"><div class="spinner"></div><p class="loading-text">Loading questions...</p></div>
+                <div class="nav-buttons">
+                    <button class="secondary" onclick="goToStep(2)">&larr; Back</button>
+                    <button onclick="goToStep(4)">Continue &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Preferences -->
+            <div id="step-4" class="step-content">
+                <div class="step-title">Your Preferences</div>
+                <div class="step-subtitle">Almost there! Set your filters and we'll find the best matches.</div>
+                <div class="input-group">
+                    <label for="remotePref">Work Location Preference:</label>
+                    <select id="remotePref">
+                        <option value="yes">Fully Remote</option>
+                        <option value="hybrid" selected>Hybrid (Home & Office)</option>
+                        <option value="no">In-Office</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="minSalary">Minimum Expected Salary ($/year):</label>
+                    <input type="number" id="minSalary" placeholder="e.g., 80000" value="75000">
+                </div>
+                <div class="input-group">
+                    <label for="industry">Target Industry (optional):</label>
+                    <input type="text" id="industry" placeholder="e.g., Tech, Design, Finance">
+                </div>
+                <div class="nav-buttons">
+                    <button class="secondary" onclick="goToStep(3)">&larr; Back</button>
+                    <button class="success" onclick="findMatches()">Find My Matches! &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Step 5: Results -->
+            <div id="step-5" class="step-content">
+                <div class="step-title">Your Top Job Matches</div>
+                <div class="step-subtitle" id="resultsIntro">Based on everything you've shared, here are your best fits.</div>
+                <div id="loadingMatches" class="loading"><div class="spinner"></div><p class="loading-text">Finding best matches...</p></div>
+                <div id="jobsContainer"></div>
+                <div class="nav-buttons">
+                    <button class="secondary" onclick="goToStep(4)">&larr; Back</button>
+                    <button class="secondary" onclick="location.reload()">Start Over</button>
+                </div>
+            </div>
+        </div>
+
+        <footer><p>Job Finder v0.0.4 | Flask + Python</p></footer>
+    </div>
+
+    <script>
+        // === State ===
+        let careerIntent = '';
+        let combinedSkills = [];
+        let experienceLevel = 'unknown';
+        let sourcesUsed = [];
+        let urlResults = [];
+        let pdfFile = null;
+        let pdfText = '';
+        let urlRowCount = 1;
+
+        // === Step Navigation ===
+        function goToStep(num) {
+            document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.step-dot').forEach(d => d.classList.remove('active'));
+            document.getElementById('step-' + num).classList.add('active');
+            document.querySelector('.step-dot[data-step="' + num + '"]').classList.add('active');
+            document.getElementById('error').style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function markStepDone(num) {
+            document.querySelector('.step-dot[data-step="' + num + '"]').classList.add('done');
+        }
+
+        // === Step 1: Welcome ===
+        function selectIntent(intent, el) {
+            careerIntent = intent;
+            document.querySelectorAll('.intent-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('welcomeNextBtn').disabled = false;
+        }
+
+        // === Step 2: Inputs — PDF ===
+        const dropZone = document.getElementById('dropZone');
+        dropZone.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', function(e) { e.preventDefault(); this.classList.remove('dragover'); });
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault(); this.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type === 'application/pdf') handlePdfFile(files[0]);
+            else showError('Please drop a PDF file');
+        });
+
+        function handlePdfFile(file) {
+            if (!file) return;
+            if (file.type !== 'application/pdf') { showError('Only PDF files accepted'); return; }
+            pdfFile = file;
+            document.getElementById('fileName').textContent = file.name + ' (' + (file.size / 1024).toFixed(0) + ' KB)';
+            document.getElementById('fileInfo').classList.add('visible');
+            dropZone.classList.add('has-file');
+            dropZone.querySelector('.drop-zone-text').textContent = 'PDF ready!';
+            document.getElementById('error').style.display = 'none';
+        }
+
+        function clearPdf() {
+            pdfFile = null; pdfText = '';
+            document.getElementById('pdfInput').value = '';
+            document.getElementById('fileInfo').classList.remove('visible');
+            dropZone.classList.remove('has-file');
+            dropZone.querySelector('.drop-zone-text').textContent = 'Drop PDF here or click to browse';
+            document.getElementById('pdfResult').classList.remove('visible');
+        }
+
+        async function uploadPdf() {
+            if (!pdfFile) { showError('Select a PDF first'); return; }
+            const formData = new FormData(); formData.append('file', pdfFile);
+            showLoading('Extracting PDF text...');
+            try {
+                const r = await fetch('/upload-pdf', { method: 'POST', body: formData });
+                if (!r.ok) { const e = await r.json(); throw new Error(e.error); }
+                const data = await r.json();
+                pdfText = data.text_preview || '';
+                document.getElementById('pdfResult').innerHTML = '<span class="status-ok">&#10003; Text extracted</span> &mdash; ' + data.skills_found.length + ' skills detected';
+                document.getElementById('pdfResult').classList.add('visible');
+                hideLoading();
+            } catch (e) { hideLoading(); showError(e.message); }
+        }
+
+        // === Step 2: Inputs — URLs ===
+        function addUrlRow() {
+            const idx = urlRowCount++;
+            const container = document.getElementById('urlList');
+            const row = document.createElement('div');
+            row.className = 'url-row'; row.dataset.idx = idx;
+            row.innerHTML = '<div class="input-row">' +
+                '<input type="text" class="url-input" placeholder="https://github.com/username or https://myportfolio.com">' +
+                '<button class="small" onclick="fetchUrlRow(' + idx + ')">Fetch</button>' +
+                '<button class="small secondary" onclick="removeUrlRow(' + idx + ')">&times;</button></div>' +
+                '<div id="url-result-' + idx + '" class="analysis-result"></div>';
+            container.appendChild(row);
+        }
+
+        function removeUrlRow(idx) {
+            const row = document.querySelector('.url-row[data-idx="' + idx + '"]');
+            if (row) row.remove();
+            if (document.querySelectorAll('.url-row').length === 0) addUrlRow();
+        }
+
+        function collectUrls() {
+            const urls = [];
+            document.querySelectorAll('.url-input').forEach(function(inp) { const v = inp.value.trim(); if (v) urls.push(v); });
+            return urls;
+        }
+
+        async function fetchUrlRow(idx) {
+            const row = document.querySelector('.url-row[data-idx="' + idx + '"]');
+            const input = row.querySelector('.url-input');
+            const url = input.value.trim();
+            if (!url) { showError('Enter a URL first'); return; }
+            const resultEl = document.getElementById('url-result-' + idx);
+            resultEl.innerHTML = '<span style="color:#666;">Fetching...</span>'; resultEl.classList.add('visible');
+            try {
+                const endpoint = url.match(/github\.com\//i) ? '/analyze-github' : '/analyze-portfolio';
+                const r = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({url}) });
+                if (!r.ok) { const e = await r.json(); throw new Error(e.error); }
+                const data = await r.json();
+                if (endpoint === '/analyze-github') {
+                    resultEl.innerHTML = '<span class="status-ok">&#10003; ' + data.username + '</span> &mdash; ' + data.public_repos + ' repos, ' + data.followers + ' followers' + (data.top_languages ? ' | ' + Object.keys(data.top_languages).join(', ') : '');
+                } else {
+                    resultEl.innerHTML = '<span class="status-ok">&#10003; ' + (data.title || url).slice(0, 55) + '</span> &mdash; ' + data.skills_found.length + ' skills';
+                }
+            } catch (e) { resultEl.innerHTML = '<span class="status-err">&#10007; ' + e.message + '</span>'; }
+        }
+
+        // === Step 2: Analyze & Continue ===
+        async function analyzeAndContinue() {
+            const resumeText = document.getElementById('resumeText').value.trim();
+            const urls = collectUrls();
+            if (!resumeText && !pdfText && urls.length === 0) { showError('Enter at least a resume, PDF, or URL'); return; }
+
+            showLoading('Analyzing everything together...');
+            try {
+                const r = await fetch('/combine-analysis', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ resume_text: resumeText || pdfText || '', urls: urls })
+                });
+                if (!r.ok) throw new Error('Analysis failed');
+                const data = await r.json();
+                combinedSkills = data.skills_found || [];
+                experienceLevel = data.experience_level || 'unknown';
+                sourcesUsed = data.sources_used || [];
+                urlResults = data.url_results || [];
+
+                // Show skills display
+                const sd = document.getElementById('skillsDisplay');
+                document.getElementById('sourcesUsed').textContent = sourcesUsed.join(', ') || 'None';
+                document.getElementById('experienceLevel').textContent = experienceLevel.toUpperCase();
+                const sl = document.getElementById('skillsList');
+                sl.innerHTML = combinedSkills.length > 0 ? combinedSkills.map(s => '<span class="skill-badge">' + s + '</span>').join('') : '<span style="color:#666;">No specific skills detected</span>';
+                if (urlResults.length > 0) {
+                    var ub = '<p style="margin-top:8px;"><strong>Per URL:</strong></p>';
+                    urlResults.forEach(function(ur) { ub += '<div style="font-size:0.85em;color:#555;margin:2px 0;">&#8226; ' + (ur.title || ur.url).slice(0, 50) + ' &mdash; ' + ur.skills_count + ' skills' + (ur.details ? ' (' + ur.details + ')' : '') + '</div>'; });
+                    document.getElementById('urlBreakdown').innerHTML = ub;
+                }
+                sd.style.display = 'block';
+                hideLoading();
+                markStepDone(2);
+
+                // Load follow-up questions
+                await loadFollowUpQuestions();
+                goToStep(3);
+            } catch (e) { hideLoading(); showError(e.message); }
+        }
+
+        // === Step 3: Follow-up Questions ===
+        async function loadFollowUpQuestions() {
+            document.getElementById('loadingFollowup').style.display = 'block';
+            document.getElementById('followupContainer').innerHTML = '';
+
+            try {
+                const r = await fetch('/follow-up-questions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ skills: combinedSkills, career_intent: careerIntent })
+                });
+                if (!r.ok) throw new Error('Failed to load questions');
+                const data = await r.json();
+
+                var intro = careerIntent === 'dream' ? 'Since you\'re aiming for your dream job, let\'s dig deeper.' : 'Let\'s refine your direction based on your skills.';
+                document.getElementById('followupIntro').textContent = intro;
+
+                var html = '';
+                data.questions.forEach(function(q, qi) {
+                    html += '<div class="followup-question" data-qi="' + qi + '">';
+                    html += '<div class="q-text">' + q.question + '</div>';
+                    html += '<div class="followup-options">';
+                    var inputType = q.multi ? 'checkbox' : 'radio';
+                    var name = 'q-' + qi;
+                    q.options.forEach(function(opt, oi) {
+                        html += '<label class="followup-option">';
+                        html += '<input type="' + inputType + '" name="' + name + '" value="' + opt.value + '" data-qi="' + qi + '">';
+                        html += '<span>' + (opt.icon || '') + ' ' + opt.label + '</span>';
+                        html += '</label>';
+                    });
+                    html += '</div></div>';
+                });
+                document.getElementById('followupContainer').innerHTML = html;
+                document.getElementById('loadingFollowup').style.display = 'none';
+            } catch (e) {
+                document.getElementById('loadingFollowup').style.display = 'none';
+                document.getElementById('followupContainer').innerHTML = '<p style="color:#666;">No additional questions needed. You\'re ready to go!</p>';
+            }
+        }
+
+        function collectFollowUpAnswers() {
+            var answers = {};
+            document.querySelectorAll('.followup-question').forEach(function(qDiv) {
+                var qi = qDiv.dataset.qi;
+                var checked = [];
+                qDiv.querySelectorAll('input:checked').forEach(function(inp) { checked.push(inp.value); });
+                if (checked.length > 0) answers['q' + qi] = checked;
+            });
+            return answers;
+        }
+
+        // === Step 4: Find Matches ===
+        async function findMatches() {
+            if (combinedSkills.length === 0) { showError('No skills found. Go back and add your information.'); return; }
+
+            document.getElementById('loadingMatches').style.display = 'block';
+            document.getElementById('jobsContainer').innerHTML = '';
+
+            var remotePref = document.getElementById('remotePref').value;
+            var minSalary = parseInt(document.getElementById('minSalary').value) || 50000;
+            var industry = document.getElementById('industry').value.trim();
+
+            var followUpAnswers = collectFollowUpAnswers();
+            var enrichedSkills = combinedSkills.slice();
+            Object.values(followUpAnswers).forEach(function(vals) { enrichedSkills = enrichedSkills.concat(vals); });
+
+            try {
+                const r = await fetch('/match-from-skills', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ skills: enrichedSkills, remote_pref: remotePref, min_salary: minSalary, industry: industry })
+                });
+                if (!r.ok) throw new Error('Matching failed');
+                const matches = await r.json();
+                displayResults(matches);
+                markStepDone(4);
+                goToStep(5);
+            } catch (e) { showError(e.message); }
+            document.getElementById('loadingMatches').style.display = 'none';
+        }
+
+        // === Step 5: Results ===
+        function displayResults(matches) {
+            var container = document.getElementById('jobsContainer');
+            container.innerHTML = '';
+
+            var intentMsg = careerIntent === 'dream' ? 'Dream job matches are highlighted with a star.' : 'Best-fit roles for your experience path.';
+            document.getElementById('resultsIntro').textContent = 'Based on everything you\'ve shared, here are your best fits. ' + intentMsg;
+
+            if (matches.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:#666;padding:30px;">No matches found. Try adjusting your preferences.</p>';
+                return;
+            }
+
+            matches.forEach(function(job) {
+                var card = document.createElement('div');
+                var isDream = careerIntent === 'dream' && job.match_score >= 85;
+                card.className = 'job-card' + (job.match_score >= 90 ? ' high-score' : '') + (isDream ? ' dream' : '');
+                var scoreClass = job.match_score >= 90 ? 'score-high' : (job.match_score >= 75 ? 'score-medium' : 'score-low');
+                var badge = isDream ? '<span style="background:#e3b341;color:white;padding:2px 8px;border-radius:4px;font-size:0.75em;margin-left:6px;">&#9733; Dream Fit</span>' : '';
+                card.innerHTML = '<div class="job-title">' + job.title + badge + '</div>' +
+                    '<div class="job-company">@ ' + job.company + '</div>' +
+                    '<div style="margin:6px 0;">' + job.description + '</div>' +
+                    '<div class="job-info"><div class="info-item"><strong>Remote:</strong> ' + job.remote_type + '</div>' +
+                    '<div class="info-item"><strong>Min Salary:</strong> $' + job.salary_min.toLocaleString() + '</div></div>' +
+                    '<div style="margin-top:8px;"><span class="score-badge ' + scoreClass + '">' + job.match_score + '% Match</span></div>' +
+                    '<div class="why-match"><strong>Why:</strong> ' + job.match_reason + '<br>' +
+                    '<small>Matching skills: ' + (job.matching_skills ? job.matching_skills.join(', ') : 'N/A') + '</small></div>';
+                container.appendChild(card);
+            });
+        }
+
+        // === Utility ===
+        function showLoading(text) {
+            document.getElementById('loadingText').textContent = text || 'Processing...';
+            document.getElementById('loadingAnalysis').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingAnalysis').style.display = 'none';
+        }
+
+        function showError(message) {
+            var el = document.getElementById('error');
+            el.textContent = message; el.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

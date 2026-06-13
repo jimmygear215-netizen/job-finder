@@ -8,61 +8,68 @@
 - [x] Created the_backup/ (snapshots for time travel)
 - [x] Initialized Git repository
 - [x] Added .gitignore
+- [x] Moved job_finder.md + the-plan.txt into the_plan/ (read-only source of truth)
+- [x] Fixed the_working/templates/index.html (was folder, now proper file)
+- [x] Fixed the_working/static/style.css (was folder, removed)
+- [x] Cleaned requirements.txt (removed unused streamlit, pywebview)
+- [x] Backup created: the_backup/v0.0.1.fullproduction.backup/
 
-## 🛠️ PENDING - PHASE 1: CORE BACKEND & API DEVELOPMENT (2-3 hours)
+## 🛠️ PHASE 1: CORE BACKEND & API DEVELOPMENT ✅ DONE
 
 ### TASK 1.0: PROJECT SETUP ✅ DONE
 - [x] Create project folder
-- [ ] Install Flask: pip install flask pywebview
+- [x] Copy working app.py into the_dev/
+- [ ] Install Flask: pip install flask
 
-### TASK 1.1: RESUME ANALYSIS ENGINE
-- [ ] Build keyword-based skill extraction
-- [ ] Detect experience level (junior/mid/senior)
-- [ ] Extract industry preferences from resume text
-- [ ] Output JSON analysis result
+### TASK 1.1: RESUME ANALYSIS ENGINE ✅ DONE
+- [x] Build keyword-based skill extraction
+- [x] Detect experience level (junior/mid/senior)
+- [x] Extract industry preferences from resume text
+- [x] Output JSON analysis result
 
-### TASK 1.2: JOB DATABASE SETUP
-- [ ] Create mock job database (at least 10 roles)
-- [ ] Include fields: title, company, remote_type, salary_min, skills_required
-- [ ] Add descriptions and requirements
+### TASK 1.2: JOB DATABASE SETUP ✅ DONE
+- [x] Create mock job database (7 roles)
+- [x] Include fields: title, company, remote_type, salary_min, skills_required
+- [x] Add descriptions and requirements
 - [ ] Future: Load from JSON file or API
 
-### TASK 1.3: JOB MATCHING ALGORITHM
-- [ ] Score jobs based on skill overlap
-- [ ] Adjust score for remote preference match
-- [ ] Filter by salary requirements
-- [ ] Sort by match_score (highest first)
-- [ ] Output top 5-10 recommendations
+### TASK 1.3: JOB MATCHING ALGORITHM ✅ DONE
+- [x] Score jobs based on skill overlap
+- [x] Adjust score for remote preference match
+- [x] Filter by salary requirements
+- [x] Sort by match_score (highest first)
+- [x] Output top 5-10 recommendations
 
-## 🎨 PENDING - PHASE 2: FRONTEND UI DEVELOPMENT (1-2 hours)
+## 🎨 PHASE 2: FRONTEND UI DEVELOPMENT ✅ DONE
 
-### TASK 2.0: HTML STRUCTURE
-- [ ] Create index.html in templates/ folder
-- [ ] Add clean, modern design (responsive CSS)
-- [ ] Two-section layout: Resume Input → Questionnaire
+### TASK 2.0: HTML STRUCTURE ✅ DONE
+- [x] Create index.html in templates/ folder
+- [x] Add clean, modern design (responsive CSS)
+- [x] Two-section layout: Resume Input → Questionnaire
 
-### TASK 2.1: RESUME INPUT SECTION
-- [ ] Textarea for resume paste (max 5000 chars)
-- [ ] "Analyze Resume" button
-- [ ] Loading spinner/indicator
-- [ ] Display detected skills after analysis
+### TASK 2.1: RESUME INPUT SECTION ✅ DONE
+- [x] Textarea for resume paste (max 5000 chars)
+- [x] "Analyze Resume" button
+- [x] Loading spinner/indicator
+- [x] Display detected skills after analysis
 
-### TASK 2.2: QUESTIONNAIRE SECTION
-- [ ] Remote preference dropdown (Yes/No/Hybrid)
-- [ ] Salary minimum input field ($)
-- [ ] Industry interest text input
-- [ ] "Find Job Matches" submit button
+### TASK 2.2: QUESTIONNAIRE SECTION ✅ DONE
+- [x] Remote preference dropdown (Yes/No/Hybrid)
+- [x] Salary minimum input field ($)
+- [x] Industry interest text input
+- [x] "Find Job Matches" submit button
 
-### TASK 2.3: RESULTS DISPLAY
-- [ ] Job card layout (title, company, remote type)
-- [ ] Match score indicator with color coding
-- [ ] Why this matches you explanation
-- [ ] Salary range display
+### TASK 2.3: RESULTS DISPLAY ✅ DONE
+- [x] Job card layout (title, company, remote type)
+- [x] Match score indicator with color coding
+- [x] Why this matches you explanation
+- [x] Salary range display
 
-## 🧪 PENDING - PHASE 3: TESTING & ITERATION (1-2 hours)
+## 🧪 PENDING - PHASE 3: TESTING & ITERATION (current focus)
 
 ### TASK 3.0: FUNCTIONAL TESTS
-- [ ] Test with sample resumes (provided in examples/)
+- [ ] Install Flask and test app runs
+- [ ] Test with sample resumes
 - [ ] Verify skill detection accuracy
 - [ ] Test edge cases (empty resume, wrong format)
 - [ ] Check all button flows work
@@ -79,7 +86,7 @@
 - [ ] Save user preferences to localStorage
 - [ ] Add job board API integration
 
-## 🚀 PENDING - PHASE 4: DESKTOP WRAPPING (1-2 hours)
+## 🚀 PENDING - PHASE 4: DESKTOP WRAPPING
 
 ### TASK 4.0: PyWEBVIEW WRAPPER (Simple Option)
 - [ ] Install PyWebView package
@@ -108,16 +115,22 @@
 
 ---
 
-## 🔥 QUICK COMMANDS TO GET STARTED:
+## 🔥 QUICK COMMANDS:
 
 ```bash
-# Install dependencies in virtual environment
-python -m venv venv
-venv\Scripts\activate
-pip install flask pywebview streamlit
+# Install dependencies
+pip install flask
+
+# Backup the_working → the_backup (before each deploy)
+Copy-Item the_working the_backup/v0.0.X.fullproduction.backup -Recurse -Force
+
+# Deploy from the_dev → the_working
+Copy-Item the_dev/app.py the_working/app.py -Force
+Copy-Item the_dev/templates/index.html the_working/templates/index.html -Force
+Copy-Item the_dev/requirements.txt the_working/requirements.txt -Force
 
 # Run the app
-cd c:\jimdev\job_finder\the_working
+cd the_working
 python app.py
 
 # Open in browser
@@ -127,7 +140,8 @@ http://localhost:5000
 ---
 
 ## 📝 NOTES:
-- Always check the_plan.txt for full details!
-- Never modify files in the_plan/ folder (read-only)
-- Test everything in the_working/ before committing to git
-- Backup frequently using the_backup/ folder
+- the_plan/ = READ-ONLY source of truth (never edit)
+- the_dev/ = all coding/editing happens here
+- the_working/ = testable deployment only
+- the_backup/ = rollback snapshots (backup BEFORE each deploy)
+- Log changes in changelog.txt on each version
