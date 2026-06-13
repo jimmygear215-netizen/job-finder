@@ -3,17 +3,8 @@
     {
       "src": "requirements.txt",
       "use": "@vercel/python"
-    },
-    {
-      "src": "templates/index.html",
-      "use": "@vercel/static"
     }
   ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/",
-      "headers": { "Cache-Control": "public, max-age=3600" }
-    }
-  ]
+  "outputDirectory": "the_working",
+  "installCommand": "pip install -r requirements.txt"
 }
