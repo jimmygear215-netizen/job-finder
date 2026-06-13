@@ -1,0 +1,133 @@
+# 📋 DEVELOPMENT CHECKLIST - COPY FROM THE_PLAN.TXT
+
+## ✅ COMPLETED (DON'T TOUCH!)
+- [x] Created project folder: c:\jimdev\job_finder
+- [x] Created the_plan/ (read-only guidelines)
+- [x] Created the_dev/ (active development workspace)
+- [x] Created the_working/ (live testable version)
+- [x] Created the_backup/ (snapshots for time travel)
+- [x] Initialized Git repository
+- [x] Added .gitignore
+
+## 🛠️ PENDING - PHASE 1: CORE BACKEND & API DEVELOPMENT (2-3 hours)
+
+### TASK 1.0: PROJECT SETUP ✅ DONE
+- [x] Create project folder
+- [ ] Install Flask: pip install flask pywebview
+
+### TASK 1.1: RESUME ANALYSIS ENGINE
+- [ ] Build keyword-based skill extraction
+- [ ] Detect experience level (junior/mid/senior)
+- [ ] Extract industry preferences from resume text
+- [ ] Output JSON analysis result
+
+### TASK 1.2: JOB DATABASE SETUP
+- [ ] Create mock job database (at least 10 roles)
+- [ ] Include fields: title, company, remote_type, salary_min, skills_required
+- [ ] Add descriptions and requirements
+- [ ] Future: Load from JSON file or API
+
+### TASK 1.3: JOB MATCHING ALGORITHM
+- [ ] Score jobs based on skill overlap
+- [ ] Adjust score for remote preference match
+- [ ] Filter by salary requirements
+- [ ] Sort by match_score (highest first)
+- [ ] Output top 5-10 recommendations
+
+## 🎨 PENDING - PHASE 2: FRONTEND UI DEVELOPMENT (1-2 hours)
+
+### TASK 2.0: HTML STRUCTURE
+- [ ] Create index.html in templates/ folder
+- [ ] Add clean, modern design (responsive CSS)
+- [ ] Two-section layout: Resume Input → Questionnaire
+
+### TASK 2.1: RESUME INPUT SECTION
+- [ ] Textarea for resume paste (max 5000 chars)
+- [ ] "Analyze Resume" button
+- [ ] Loading spinner/indicator
+- [ ] Display detected skills after analysis
+
+### TASK 2.2: QUESTIONNAIRE SECTION
+- [ ] Remote preference dropdown (Yes/No/Hybrid)
+- [ ] Salary minimum input field ($)
+- [ ] Industry interest text input
+- [ ] "Find Job Matches" submit button
+
+### TASK 2.3: RESULTS DISPLAY
+- [ ] Job card layout (title, company, remote type)
+- [ ] Match score indicator with color coding
+- [ ] Why this matches you explanation
+- [ ] Salary range display
+
+## 🧪 PENDING - PHASE 3: TESTING & ITERATION (1-2 hours)
+
+### TASK 3.0: FUNCTIONAL TESTS
+- [ ] Test with sample resumes (provided in examples/)
+- [ ] Verify skill detection accuracy
+- [ ] Test edge cases (empty resume, wrong format)
+- [ ] Check all button flows work
+
+### TASK 3.1: USER EXPERIENCE IMPROVEMENTS
+- [ ] Add success/error messages
+- [ ] Improve loading states
+- [ ] Make responsive for mobile devices
+- [ ] Add keyboard shortcuts (optional)
+
+### TASK 3.2: FEATURE EXPANSION
+- [ ] PDF resume upload support
+- [ ] Export results as PDF
+- [ ] Save user preferences to localStorage
+- [ ] Add job board API integration
+
+## 🚀 PENDING - PHASE 4: DESKTOP WRAPPING (1-2 hours)
+
+### TASK 4.0: PyWEBVIEW WRAPPER (Simple Option)
+- [ ] Install PyWebView package
+- [ ] Create desktop_wrapper.py script
+- [ ] Load Flask app from file:// location
+- [ ] Test desktop launch
+
+### TASK 4.1: ELECTRON WRAPPER (Advanced Option - Later)
+- [ ] Set up Electron project structure
+- [ ] Create renderer/index.html
+- [ ] Build IPC communication with Python backend
+- [ ] Package for Windows/macOS/Linux
+
+## 📊 PENDING - PHASE 5: DEPLOYMENT & SHARING (Optional - Future)
+
+### TASK 5.0: LOCAL SERVER HOSTING
+- [ ] Run on production-grade server (Heroku/AWS/Netlify)
+- [ ] Or host locally via Streamlit Cloud
+- [ ] Setup environment variables for API keys
+
+### TASK 5.1: JOB BOARD API INTEGRATION
+- [ ] Connect to Indeed API (if available)
+- [ ] Fetch real-time job listings
+- [ ] Match user resume against live postings
+- [ ] Display actual company info, salary ranges
+
+---
+
+## 🔥 QUICK COMMANDS TO GET STARTED:
+
+```bash
+# Install dependencies in virtual environment
+python -m venv venv
+venv\Scripts\activate
+pip install flask pywebview streamlit
+
+# Run the app
+cd c:\jimdev\job_finder\the_working
+python app.py
+
+# Open in browser
+http://localhost:5000
+```
+
+---
+
+## 📝 NOTES:
+- Always check the_plan.txt for full details!
+- Never modify files in the_plan/ folder (read-only)
+- Test everything in the_working/ before committing to git
+- Backup frequently using the_backup/ folder

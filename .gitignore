@@ -1,0 +1,29 @@
+# Python Byte-Code / .pyc files
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# IDEs and text editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# Project specific - don't upload these!
+node_modules/
+__pycache__/
+*.egg-info/
+dist/
+build/
+.env
+.env.local
+.pytest_cache/
+.coverage

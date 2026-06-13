@@ -1,0 +1,25 @@
+git add .
+git commit -m "Initial commit: Job Finder Flask app with resume analysis + job matching
+
+Features:
+- Paste resume content, detect skills & experience level
+- Questionnaire: remote preference, salary expectation, industry
+- Job database with 8 pre-configured roles
+- Match scoring algorithm (skill overlap + remote + salary)
+- Beautiful responsive HTML frontend
+- Can be wrapped in PyWebView or deployed to Vercel
+
+Files created:
+- app.py (Flask backend with resume analysis + matching logic)
+- index.html (Full UI with resume input + questionnaire + results)
+- requirements.txt (Python dependencies)
+- README.md (Documentation)
+- .gitignore (Git ignore patterns)
+- vercel.json (Vercel deployment config)
+
+Project structure:
+- the_plan/ (read-only guidelines - never modify!)
+- the_dev/ (active development workspace)
+- the_working/ (live testable version)
+- the_backup/ (time travel snapshots)"
+git push origin main --follow-tags

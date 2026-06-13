@@ -1,0 +1,4 @@
+flask
+pywebview
+streamlit
+requests
